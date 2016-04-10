@@ -583,7 +583,7 @@ As you might have noticed we have got rid of all the code that calls the `cache`
 The cache lookup is done by Payara for us.
 We only left the pass through call when nothing is found in the cache.
 
-WARNING: At the moment of writing of this hands on lab, it was impossible to combine `@CacheResult` methods with methods that work directly with the JCache API for one and the same cache. It resulted in `IllegalArgumentException`. Everything along with a workaround is explained in https://gist.github.com/ivannov/258ce072b01d0c55dcbc9079c50458d5[this gist]
+WARNING: At the moment of writing of this hands on lab, it was impossible to combine `@CacheResult` methods with methods that work directly with the JCache API for one and the same cache. It resulted in `IllegalArgumentException`. Everything along with a workaround is explained in [this gist]https://gist.github.com/ivannov/258ce072b01d0c55dcbc9079c50458d5
 
 Next up, let's pretend that we badly need a new method in our `UserManager` - `adduser(String userName, User user)`.
 Let's add it to the interface and to both implementations.
@@ -915,7 +915,7 @@ For these two reasons the `JCacheCommentsManager` class looks like the following
          Comment submittedComment = passThroughCommentsManager.submitComment(newComment);
          try {
              cache.put(submittedComment.getId(), new PayaraValueHolder(submittedComment));
-             cache.invoke(newComment.getId(), new CommentsAuthorEntryProcessor());
+             cache.invoke(submittedComment.getId(), new CommentsAuthorEntryProcessor());
          } catch (IOException e) {
              e.printStackTrace();
          }
@@ -937,7 +937,7 @@ For these two reasons the `JCacheCommentsManager` class looks like the following
 ----
 
 
-=== Task 6: Establish cache integrations (for read-through/write-through) operations with `CacheWriter` /  `CacheLoader` instances
+=== Task 6: Establish cache integrations (for read-through/write-through operations) with `CacheWriter` /  `CacheLoader` instances
 
 *Features to demonstrate*
 
@@ -1026,6 +1026,9 @@ Now we can add the writer and reader that we just created to our cache configura
     @Inject
     private UserCacheLoader cacheLoader;
 
+    @Inject
+    private UserCacheWriter cacheWriter;
+
     @PostConstruct
     public void createUserCache() {
         cache = cacheManager.getCache(USERS_CACHE_NAME);
@@ -1042,17 +1045,15 @@ Now we can add the writer and reader that we just created to our cache configura
     }
 ----
 
-Finally, we can get rid of the `JPAUserManager` in our `JCacheUserManager` along with all the operation that we explicitly called on it.
+Finally, we can get rid of the "passthrough" `JPAUserManager` in our `JCacheUserManager` along with all the operation that we explicitly called on it.
 
 [source,java]
 ----
 @Override
 public User getUser(String userName, String password) {
     User user = cache.get(userName);
-    if (user != null) {
-        if (user.getPassword().equals(password)) {
-            return user;
-        }
+    if (user != null && user.getPassword().equals(password)) {
+        return user;
     }
     return null;
 }
@@ -1063,16 +1064,16 @@ public void addUser(User newUser) {
 }
 
 @Override
+@CachePut
+public void addUser(@CacheKey String userName, @CacheValue User newUser) {
+    // Do nothing, everything is done by JCache
+}
+
+@Override
 @CacheResult
 public User findUserByName(@CacheKey String userName) {
     // Do nothing, everything is done by JCache
     return null;
-}
-
-@Override
-@CachePut
-public void addUser(@CacheKey String userName, @CacheValue User newUser) {
-    // Do nothing, everything is done by JCache
 }
 ----
 
