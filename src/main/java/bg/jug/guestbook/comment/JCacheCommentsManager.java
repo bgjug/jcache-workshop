@@ -1,8 +1,5 @@
 package bg.jug.guestbook.comment;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.cache.Cache;
@@ -13,7 +10,9 @@ import javax.inject.Inject;
 import bg.jug.guestbook.entities.Comment;
 import bg.jug.guestbook.cache.JCache;
 import bg.jug.guestbook.cache.JPA;
-import fish.payara.cdi.jsr107.impl.PayaraValueHolder;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import javax.cache.Cache.Entry;
 
 /**
  * @author Ivan St. Ivanov
@@ -22,68 +21,52 @@ import fish.payara.cdi.jsr107.impl.PayaraValueHolder;
 @JCache
 public class JCacheCommentsManager implements CommentsManager {
 
-	@Inject
-	@JPA
-	private CommentsManager passThroughCommentsManager;
+    @Inject
+    @JPA
+    private CommentsManager passThroughCommentsManager;
 
     @Inject
-	private CommentAuthorEntryProcessor processor;
+    private CommentAuthorEntryProcessor processor;
 
-	@Inject
-	private Cache<Long, PayaraValueHolder> cache;
+    @Inject
+    @JCache
+    private Cache<Long, Comment> cache;
 
-	@Override
-	public List<Comment> getAllComments() throws ClassNotFoundException,
-			IOException {
+    @Override
+    public List<Comment> getAllComments() {
+        List<Comment> foundComments = Lists.newArrayList(Iterators.transform(cache.iterator(), Entry::getValue));
+        if(!foundComments.isEmpty()) {
+            return foundComments;
+        }
+        List<Comment> dbComments = passThroughCommentsManager.getAllComments();
 
-		Iterator<Cache.Entry<Long, PayaraValueHolder>> commentsCacheIterator = cache
-				.iterator();
-		if (commentsCacheIterator.hasNext()) {
-			// Converting iterator to Stream is a bit ugly, so doing it the
-			// Java 7 way
-			List<Comment> foundComments = new ArrayList<>();
-			while (commentsCacheIterator.hasNext()) {
-				Comment comment = (Comment) commentsCacheIterator.next()
-						.getValue().getValue();
-				foundComments.add(comment);
-			}
-			return foundComments;
-		}
+        dbComments.forEach(comment -> {
+            cache.put(comment.getId(), comment);
+            cache.invoke(comment.getId(), processor);
+        });
 
-		List<Comment> dbComments = passThroughCommentsManager.getAllComments();
-		
-		dbComments.forEach(comment -> {
-			try {
-				cache.put(comment.getId(), new PayaraValueHolder(comment));
-				cache.invoke(comment.getId(), processor);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+        return dbComments;
 
-		return dbComments;
+    }
 
-	}
-	
-	@Override
-	public Comment submitComment(Comment newComment) throws IOException {
-		Comment submittedComment = passThroughCommentsManager
-				.submitComment(newComment);
-		cache.put(submittedComment.getId(), new PayaraValueHolder(
-				submittedComment));
-		cache.invoke(submittedComment.getId(), processor);
-		return submittedComment;
-	}
+    @Override
+    public Comment submitComment(Comment newComment) {
+        Comment submittedComment = passThroughCommentsManager
+                .submitComment(newComment);
+        cache.put(submittedComment.getId(), submittedComment);
+        cache.invoke(submittedComment.getId(), processor);
+        return submittedComment;
+    }
 
-	@Override
-	public void deleteCommentWithId(Long commentId) {
-		passThroughCommentsManager.deleteCommentWithId(commentId);
-		cache.remove(commentId);
-	}
+    @Override
+    public void deleteCommentWithId(Long commentId) {
+        passThroughCommentsManager.deleteCommentWithId(commentId);
+        cache.remove(commentId);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object getStatistics() {
-		return cache.getConfiguration(CompleteConfiguration.class);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object getStatistics() {
+        return cache.getConfiguration(CompleteConfiguration.class);
+    }
 }

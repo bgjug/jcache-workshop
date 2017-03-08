@@ -1,24 +1,17 @@
 package bg.jug.guestbook.admin;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
+import lombok.Getter;
 
 /**
  * @author Ivan St. Ivanov
  */
-@ApplicationScoped
+@RequestScoped
 public class EntityManagerProducer {
-
-    @PersistenceUnit
-    private EntityManagerFactory emf;
-
-    @RequestScoped
-    @Produces
-    public EntityManager getEntityManager() {
-        return emf.createEntityManager();
-    }
+    @PersistenceContext
+    @Getter(onMethod = @__(@Produces))
+    private EntityManager em;
 }

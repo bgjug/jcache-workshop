@@ -1,6 +1,7 @@
 package bg.jug.guestbook.users;
 
 import bg.jug.guestbook.cache.JCache;
+import javax.enterprise.context.RequestScoped;
 
 import javax.inject.Inject;
 import javax.mvc.Models;
@@ -14,6 +15,7 @@ import javax.ws.rs.QueryParam;
  */
 @Controller
 @Path("/user")
+@RequestScoped
 public class UserController {
 
     @Inject

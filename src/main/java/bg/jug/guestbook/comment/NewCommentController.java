@@ -21,12 +21,14 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URI;
 import java.util.stream.Collectors;
+import javax.enterprise.context.RequestScoped;
 
 /**
  * @author Ivan St. Ivanov
  */
 @Controller
 @Path("/newcomment")
+@RequestScoped
 public class NewCommentController {
 
     @Inject
@@ -59,10 +61,8 @@ public class NewCommentController {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("newComment.jsp").build();
         }
-        Comment newComment = new Comment(comment.getTitle(), comment.getContent(), currentUser);
+        Comment newComment = Comment.builder().title(comment.getTitle()).content(comment.getContent()).byUser(currentUser).build();
         commentsManager.submitComment(newComment);
         return Response.seeOther(URI.create("comment")).build();
     }
-
-
 }

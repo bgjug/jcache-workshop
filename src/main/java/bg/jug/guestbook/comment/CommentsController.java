@@ -15,12 +15,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.enterprise.context.RequestScoped;
 
 /**
  * @author Ivan St. Ivanov
  */
 @Controller
 @Path("/comment")
+@RequestScoped
 public class CommentsController {
 
     @Inject
@@ -45,7 +47,7 @@ public class CommentsController {
     @GET
     @Path("/delete")
     public Response deleteComment(@QueryParam("commentId") Long commentId) {
-        if (currentUser.isAdmin()) {
+        if (currentUser.isAdminUser()) {
             commentsManager.deleteCommentWithId(commentId);
         } else {
             messagesBean.setMessage("Only admin users are allowed to delete comments");

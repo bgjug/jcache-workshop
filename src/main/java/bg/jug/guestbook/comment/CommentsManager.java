@@ -2,7 +2,6 @@ package bg.jug.guestbook.comment;
 
 import bg.jug.guestbook.entities.Comment;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -10,9 +9,9 @@ import java.util.List;
  */
 interface CommentsManager {
 
-    List<Comment> getAllComments() throws ClassNotFoundException, IOException;
+    List<Comment> getAllComments();
 
-    Comment submitComment(Comment newComment) throws IOException;
+    Comment submitComment(Comment newComment);
     
     void deleteCommentWithId(Long commentId);
 

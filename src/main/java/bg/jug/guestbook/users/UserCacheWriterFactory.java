@@ -1,21 +1,24 @@
 package bg.jug.guestbook.users;
 
-import fish.payara.cdi.jsr107.impl.PayaraValueHolder;
-
+import bg.jug.guestbook.entities.User;
 import javax.cache.configuration.Factory;
 import javax.cache.integration.CacheWriter;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 /**
  * @author Ivan St. Ivanov
  */
-public class UserCacheWriterFactory implements Factory<CacheWriter<String, PayaraValueHolder>> {
+@Dependent
+public class UserCacheWriterFactory implements Factory<CacheWriter<String, User>> {
+
+    private static final long serialVersionUID = 1L;
 
     @Inject
     private UserCacheWriter userCacheWriter;
 
     @Override
-    public CacheWriter<String, PayaraValueHolder> create() {
+    public CacheWriter<String, User> create() {
         return userCacheWriter;
     }
 }

@@ -22,7 +22,7 @@
 	            <th>Title</th>
 	            <th>Content</th>
 	            <th>Author</th>
-	            <c:if test="${user.admin}"><th>Admin</th></c:if>
+	            <c:if test="${user.adminUser}"><th>Admin</th></c:if>
 	        </tr>
 	
 	        <c:forEach items="${comments}" var="comment" varStatus="loop">
@@ -32,7 +32,7 @@
 	                <td><a href="user?userName=${comment.byUser.userName}">
 						<c:out value="${comment.byUser.firstName}"/>
 	                    <c:out value="${comment.byUser.lastName}"/></a></td>
-	                <c:if test="${user.admin}"><td><a href="comment/delete?commentId=${comment.id}">Delete</a></td></c:if>
+	                <c:if test="${user.adminUser}"><td><a href="comment/delete?commentId=${comment.id}">Delete</a></td></c:if>
 	            </tr>
 	        </c:forEach>
 	    </table>

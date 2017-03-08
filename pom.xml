@@ -13,7 +13,19 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 	<dependencies>
-		<dependency>
+	 <dependency>
+	  <groupId>org.projectlombok</groupId>
+	  <artifactId>lombok</artifactId>
+	  <version>1.16.12</version>
+	  <scope>provided</scope>
+	 </dependency>
+	 <dependency>
+	  <groupId>com.google.guava</groupId>
+	  <artifactId>guava</artifactId>
+	  <version>21.0</version>
+	  <scope>provided</scope>
+	 </dependency>
+	 <dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
@@ -33,13 +45,6 @@
 			<groupId>javax.cache</groupId>
 			<artifactId>cache-api</artifactId>
 			<version>1.0.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>fish.payara.extras</groupId>
-			<artifactId>payara-embedded-all</artifactId>
-			<version>4.1.152.1</version>
-			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
