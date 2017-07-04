@@ -14,7 +14,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.PreDestroy;
 
 /**
  * @author Ivan St. Ivanov
@@ -47,10 +46,5 @@ public class CommentsCacheProducer {
             cache = cacheManager.createCache(COMMENTS_CACHE_NAME, cacheConfig);
         }
         return cache;
-    }
-
-    @PreDestroy
-    public void destroy() {
-        cacheManager.destroyCache(COMMENTS_CACHE_NAME);
     }
 }

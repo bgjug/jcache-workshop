@@ -21,6 +21,9 @@ public class TestDataInserter {
 
     @PostConstruct
     public void insertTestData() {
+        if(Boolean.getBoolean("noinitdb")) {
+            return;
+        }
         em.createQuery("DELETE FROM Comment").executeUpdate();
         em.createQuery("DELETE FROM User").executeUpdate();
 

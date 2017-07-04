@@ -2,7 +2,6 @@ package bg.jug.guestbook.users;
 
 import bg.jug.guestbook.cache.JCache;
 import bg.jug.guestbook.entities.User;
-import javax.annotation.PreDestroy;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.configuration.MutableConfiguration;
@@ -43,10 +42,5 @@ public class UserCacheProducer {
             cache = cacheManager.createCache(USERS_CACHE_NAME, cacheConfig);
         }
         return cache;
-    }
-
-    @PreDestroy
-    void destroy() {
-        cacheManager.destroyCache(USERS_CACHE_NAME);
     }
 }
