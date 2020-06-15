@@ -6,7 +6,6 @@ import bg.jug.guestbook.cache.JCache;
 import bg.jug.guestbook.users.LoggedIn;
 
 import javax.inject.Inject;
-import javax.mvc.annotation.Controller;
 import javax.mvc.binding.BindingResult;
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
@@ -22,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
+import javax.mvc.Controller;
 
 /**
  * @author Ivan St. Ivanov
@@ -54,8 +54,7 @@ public class NewCommentController {
     @ValidateOnExecution(type = ExecutableType.NONE)
     public Response submitComment(@Valid @BeanParam CommentModel comment) throws IOException {
         if (br.isFailed()) {
-            String errorMessage = br.getAllViolations().stream()
-                    .map(ConstraintViolation::getMessage)
+            String errorMessage = br.getAllMessages().stream()
                     .collect(Collectors.joining("<br>"));
             messagesBean.setMessage(errorMessage);
             return Response.status(Response.Status.BAD_REQUEST)

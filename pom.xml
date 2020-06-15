@@ -16,7 +16,7 @@
 	 <dependency>
 	  <groupId>org.projectlombok</groupId>
 	  <artifactId>lombok</artifactId>
-	  <version>1.16.12</version>
+	  <version>1.18.12</version>
 	  <scope>provided</scope>
 	 </dependency>
 	 <dependency>
@@ -28,23 +28,28 @@
 	 <dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
+			<version>8.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.mvc</groupId>
 			<artifactId>javax.mvc-api</artifactId>
-			<version>1.0-edr2</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.ozark</groupId>
-			<artifactId>ozark</artifactId>
-			<version>1.0.0-m02</version>
+			<groupId>org.eclipse.krazo</groupId>
+			<artifactId>krazo-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.krazo</groupId>
+			<artifactId>krazo-jersey</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.cache</groupId>
 			<artifactId>cache-api</artifactId>
-			<version>1.0.0</version>
+			<version>1.1.1</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

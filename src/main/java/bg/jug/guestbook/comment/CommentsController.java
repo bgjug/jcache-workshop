@@ -7,7 +7,6 @@ import bg.jug.guestbook.users.LoggedIn;
 
 import javax.inject.Inject;
 import javax.mvc.Models;
-import javax.mvc.annotation.Controller;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
@@ -16,6 +15,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
+import javax.mvc.Controller;
 
 /**
  * @author Ivan St. Ivanov

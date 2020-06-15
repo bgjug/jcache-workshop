@@ -5,7 +5,7 @@ import bg.jug.guestbook.cache.JCache;
 import javax.enterprise.context.RequestScoped;
 
 import javax.inject.Inject;
-import javax.mvc.annotation.Controller;
+import javax.mvc.Controller;
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
