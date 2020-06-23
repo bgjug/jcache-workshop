@@ -7,7 +7,6 @@ import bg.jug.guestbook.users.LoggedIn;
 
 import javax.inject.Inject;
 import javax.mvc.Models;
-import javax.mvc.annotation.Controller;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
@@ -15,12 +14,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.enterprise.context.RequestScoped;
+import javax.mvc.Controller;
 
 /**
  * @author Ivan St. Ivanov
  */
 @Controller
 @Path("/comment")
+@RequestScoped
 public class CommentsController {
 
     @Inject
@@ -45,7 +47,7 @@ public class CommentsController {
     @GET
     @Path("/delete")
     public Response deleteComment(@QueryParam("commentId") Long commentId) {
-        if (currentUser.isAdmin()) {
+        if (currentUser.isAdminUser()) {
             commentsManager.deleteCommentWithId(commentId);
         } else {
             messagesBean.setMessage("Only admin users are allowed to delete comments");

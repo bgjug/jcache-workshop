@@ -11,6 +11,6 @@
 <p>
 <b>First name:</b> <c:out value="${user.firstName}"></c:out><br>
 <b>Last name:</b> <c:out value="${user.lastName}"></c:out><br>
-<b>Admin?:</b> <c:out value="${user.admin}"></c:out><br>
+<b>Admin?:</b> <c:out value="${user.adminUser}"></c:out><br>
 </p>
 </body>

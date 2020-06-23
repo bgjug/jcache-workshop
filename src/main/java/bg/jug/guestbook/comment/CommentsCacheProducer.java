@@ -1,8 +1,7 @@
 package bg.jug.guestbook.comment;
 
-import bg.jug.guestbook.cache.Hazelcast;
-import fish.payara.cdi.jsr107.impl.PayaraValueHolder;
-
+import bg.jug.guestbook.cache.JCache;
+import bg.jug.guestbook.entities.Comment;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.configuration.FactoryBuilder;
@@ -22,30 +21,30 @@ import java.util.concurrent.TimeUnit;
 @ApplicationScoped
 public class CommentsCacheProducer {
 
-	private static final String COMMENTS_CACHE_NAME = "comments";
+    private static final String COMMENTS_CACHE_NAME = "comments";
 
     @Inject
-    @Hazelcast
-	private CacheManager cacheManager;
-	
-	@Produces
-	@RequestScoped
-	public Cache<Long, PayaraValueHolder> getCommentsCache() {
-		
-		Cache<Long, PayaraValueHolder> cache = cacheManager.getCache(COMMENTS_CACHE_NAME,
-				Long.class, PayaraValueHolder.class);
-		if (cache == null) {
-			MutableConfiguration<Long, PayaraValueHolder> cacheConfig = new MutableConfiguration<>();
-			cacheConfig.setTypes(Long.class, PayaraValueHolder.class);
-			cacheConfig.setExpiryPolicyFactory(FactoryBuilder
-					.factoryOf(new AccessedExpiryPolicy(new Duration(
-							TimeUnit.MINUTES, 3))));
-			cacheConfig
-					.addCacheEntryListenerConfiguration(new MutableCacheEntryListenerConfiguration<>(
-							FactoryBuilder.factoryOf(EntryCreatedLogListener.class),
-							null, true, true));
-			cache = cacheManager.createCache(COMMENTS_CACHE_NAME, cacheConfig);
-		}
-		return cache;
-	}
+    private CacheManager cacheManager;
+
+    @Produces
+    @RequestScoped
+    @JCache
+    public Cache<Long, Comment> getCommentsCache() {
+
+        Cache<Long, Comment> cache = cacheManager.getCache(COMMENTS_CACHE_NAME,
+                Long.class, Comment.class);
+        if (cache == null) {
+            MutableConfiguration<Long, Comment> cacheConfig = new MutableConfiguration<>();
+            cacheConfig.setTypes(Long.class, Comment.class);
+            cacheConfig.setExpiryPolicyFactory(FactoryBuilder
+                    .factoryOf(new AccessedExpiryPolicy(new Duration(
+                            TimeUnit.MINUTES, 3))));
+            cacheConfig
+                    .addCacheEntryListenerConfiguration(new MutableCacheEntryListenerConfiguration<>(
+                            FactoryBuilder.factoryOf(EntryCreatedLogListener.class),
+                            null, true, true));
+            cache = cacheManager.createCache(COMMENTS_CACHE_NAME, cacheConfig);
+        }
+        return cache;
+    }
 }

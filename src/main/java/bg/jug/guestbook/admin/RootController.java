@@ -1,6 +1,7 @@
 package bg.jug.guestbook.admin;
 
-import javax.mvc.annotation.Controller;
+import javax.enterprise.context.RequestScoped;
+import javax.mvc.Controller;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -8,6 +9,7 @@ import javax.ws.rs.Path;
  * @author Ivan St. Ivanov
  */
 @Controller
+@RequestScoped
 @Path("/")
 public class RootController {
 

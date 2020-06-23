@@ -2,9 +2,10 @@ package bg.jug.guestbook.users;
 
 import bg.jug.guestbook.entities.User;
 import bg.jug.guestbook.cache.JCache;
+import javax.enterprise.context.RequestScoped;
 
 import javax.inject.Inject;
-import javax.mvc.annotation.Controller;
+import javax.mvc.Controller;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -15,6 +16,7 @@ import javax.ws.rs.Path;
  */
 @Controller
 @Path("/login")
+@RequestScoped
 public class LoginController {
 
     @Inject

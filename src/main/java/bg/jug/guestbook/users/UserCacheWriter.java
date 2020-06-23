@@ -2,21 +2,20 @@ package bg.jug.guestbook.users;
 
 import bg.jug.guestbook.cache.JPA;
 import bg.jug.guestbook.entities.User;
-import fish.payara.cdi.jsr107.impl.PayaraValueHolder;
+import bg.jug.guestbook.users.UserManager;
 
 import javax.cache.Cache;
 import javax.cache.integration.CacheWriter;
 import javax.cache.integration.CacheWriterException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.Collection;
 
 /**
  * @author Ivan St. Ivanov
  */
 @ApplicationScoped
-public class UserCacheWriter implements CacheWriter<String, PayaraValueHolder> {
+public class UserCacheWriter implements CacheWriter<String, User> {
 
     @Inject
     @JPA
@@ -24,16 +23,12 @@ public class UserCacheWriter implements CacheWriter<String, PayaraValueHolder> {
 
 
     @Override
-    public void write(Cache.Entry<? extends String, ? extends PayaraValueHolder> entry) throws CacheWriterException {
-        try {
-            userManager.addUser((User) entry.getValue().getValue());
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void write(Cache.Entry<? extends String, ? extends User> entry) throws CacheWriterException {
+        userManager.addUser(entry.getValue());
     }
 
     @Override
-    public void writeAll(Collection<Cache.Entry<? extends String, ? extends PayaraValueHolder>> entries) throws CacheWriterException {
+    public void writeAll(Collection<Cache.Entry<? extends String, ? extends User>> entries) throws CacheWriterException {
         entries.forEach(this::write);
     }
 

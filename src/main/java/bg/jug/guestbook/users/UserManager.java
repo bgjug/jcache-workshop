@@ -7,7 +7,7 @@ import javax.transaction.Transactional;
 /**
  * @author Ivan St. Ivanov
  */
-interface UserManager {
+public interface UserManager {
 
     User getUser(String userName, String password);
 

@@ -3,11 +3,13 @@ package bg.jug.guestbook.comment;
 import javax.enterprise.inject.Model;
 import javax.validation.constraints.Size;
 import javax.ws.rs.FormParam;
+import lombok.Data;
 
 /**
  * @author Ivan St. Ivanov
  */
 @Model
+@Data
 public class CommentModel {
 
     @Size(max = 100)
@@ -16,20 +18,4 @@ public class CommentModel {
 
     @FormParam("content")
     private String content;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 }

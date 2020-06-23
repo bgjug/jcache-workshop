@@ -6,7 +6,6 @@ import bg.jug.guestbook.cache.JCache;
 import bg.jug.guestbook.users.LoggedIn;
 
 import javax.inject.Inject;
-import javax.mvc.annotation.Controller;
 import javax.mvc.binding.BindingResult;
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
@@ -21,12 +20,17 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URI;
 import java.util.stream.Collectors;
+import javax.enterprise.context.RequestScoped;
+import javax.mvc.Controller;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 /**
  * @author Ivan St. Ivanov
  */
 @Controller
 @Path("/newcomment")
+@RequestScoped
 public class NewCommentController {
 
     @Inject
@@ -43,6 +47,9 @@ public class NewCommentController {
     @LoggedIn
     private User currentUser;
 
+    @Inject
+    private EntityManager em;
+
     @GET
     public String showNewCommentForm() {
         return "newComment.jsp";
@@ -50,19 +57,22 @@ public class NewCommentController {
 
     @POST
     @ValidateOnExecution(type = ExecutableType.NONE)
+    @Transactional
     public Response submitComment(@Valid @BeanParam CommentModel comment) throws IOException {
         if (br.isFailed()) {
-            String errorMessage = br.getAllViolations().stream()
-                    .map(ConstraintViolation::getMessage)
+            String errorMessage = br.getAllMessages().stream()
                     .collect(Collectors.joining("<br>"));
             messagesBean.setMessage(errorMessage);
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("newComment.jsp").build();
         }
-        Comment newComment = new Comment(comment.getTitle(), comment.getContent(), currentUser);
+        User dbUser = em.find(User.class, currentUser.getId());
+        if(dbUser == null) {
+            dbUser = User.build(currentUser.getUserName(), currentUser.getPassword(), currentUser.getFirstName(), currentUser.getLastName()).id(currentUser.getId()).build();
+            em.persist(dbUser);
+        }
+        Comment newComment = Comment.builder().title(comment.getTitle()).content(comment.getContent()).byUser(dbUser).build();
         commentsManager.submitComment(newComment);
         return Response.seeOther(URI.create("comment")).build();
     }
-
-
 }

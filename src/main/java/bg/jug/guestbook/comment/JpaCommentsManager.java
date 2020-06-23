@@ -19,17 +19,20 @@ public class JpaCommentsManager implements CommentsManager {
     @Inject
     private EntityManager em;
 
+    @Override
     public List<Comment> getAllComments() {
         return em.createNamedQuery("getAllComments", Comment.class).getResultList();
     }
 
     @Transactional
+    @Override
     public Comment submitComment(Comment newComment) {
         em.persist(newComment);
         return newComment;
     }
 
     @Transactional
+    @Override
     public void deleteCommentWithId(Long commentId) {
         final Comment comment = em.find(Comment.class, commentId);
         if (comment != null) {
